@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/template/style/artist_card.css">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDinrO3YqS2u1_jivxy4QKUaIQIg6ezlvA"></script>
+    <script src="template/script/script.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="artist_info">
+        <form>
+            <input type="button" value="Back" class="homeButton" onclick="history.back()">
+        </form>
+        <div class="header">
+            <header>
+              <h1>{{.Name}}</h1>
+            </header>
+        </div>
+        <div class="info">
+            <img src="{{.Image}}" alt="Artist Image">
+            <p><b>Creation Date: </b>{{.CreationDate}}</p>
+            <p><b>First Album: </b>{{.FirstAlbumDate.Format "2 January 2006"}}</p>
+            <p><b>Members:</b></p>
+            {{range .Members}}
+            {{ . }}<br>
+            {{end}}
+        </div>
+        <div class="concerts">
+            <p><b>Concerts:</b></p>
+            {{range $key, $value := .DatesLocations}}
+            {{$key.Format "02 Jan 2006"}} {{ . }}<br>
+            {{end}}
+        </div>
+        <div id="map" ></div>
+        <script>
+        var loc = '{{.Locations}}';
+        const locArray = loc.substring(1, loc.length-1).split(" ");
+        for (let i = 0; i < locArray.length; i++) {         // Reformat address
+            const l1 = locArray[i].replace("-",", ");
+            const l2 = l1.replace("_","-");
+            locArray[i] = l2;
+        }
+        getLocations(locArray, function(locations) {
+            initMap(locations);
+        });
+        </script>
+    </div>
+    
+</body>
+
+</html>

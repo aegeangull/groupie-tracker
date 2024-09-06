@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
+    <link rel="stylesheet" href="/template/style/styles.css">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDinrO3YqS2u1_jivxy4QKUaIQIg6ezlvA"></script>
+    <script src="template/script/script.js"></script>
+    <title>Groupie-Tracker</title>
+</head>
+
+<body>
+    <div class="header">
+        <header>
+          <h1>Groupie-tracker</h1>
+        </header>
+    </div>
+
+    <div class="search_div">
+        <form action="/search" method="POST" id="searchForm">
+            <input class="searchbar" type="search" id="searchBar" name="searchBar" placeholder="Search" list="autocomplete">
+            <datalist id="autocomplete">
+                {{range .}}
+                    <option value="{{.Name}} - band/artist">
+                {{end}}
+                    {{range .}}
+                        {{range .Members}}
+                        <option value="{{.}} - member">
+                        {{end}}
+                    {{end}}
+                    {{range .}}
+                    {{range .Locations}}
+                    <option value="{{.}} - concert location">
+                    {{end}}
+                {{end}}
+                {{range .}}
+                    <option value="{{.FirstAlbum}} - first album date">
+                {{end}}
+                {{range .}}
+                    <option value="{{.CreationDate}} - creation date">
+                {{end}}
+                </option>
+            </datalist>
+            <button type="submit" class="searchbtn">SEARCH</button>
+        </form>
+    </div>
+
+    <div class="filter_div">
+        <form action="/filter" method="POST" id="filterForm">
+            <div class="slider">
+                <input id="fromYear" name="fromYear" type="range" value="1950" min="1950" max="2020"/>
+                <input id="toYear" name="toYear" type="range" value="2020" min="1950" max="2020"/>
+            </div>
+            <p>Carrer starting year. From: <span id="fromYearDemo"></span> To: <span id="toYearDemo"></span></p>
+            <div class="slider">
+                <input id="fromAlbum" name="fromAlbum" type="range" value="1950" min="1950" max="2020"/>
+                <input id="toAlbum" name="toAlbum" type="range" value="2020" min="1950" max="2020"/>
+            </div>
+            <p>First album year. From: <span id="fromAlbumDemo"></span> To: <span id="toAlbumDemo"></span></p>
+            <label for="loc">Concert Location: </label>
+            <select name="loc" id="loc">
+                <option value="-">-</option>
+                {{range .}}
+                    {{range $key, $value := .DatesLocations}}
+                    <option value="{{.}}">{{.}}</option>
+                    {{end}}
+                {{end}}
+            </select>
+            <label for="members">№ Members: </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="1" name="members" value="1">1
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="2" name="members" value="2">2
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="3" name="members" value="3">3
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="4" name="members" value="4">4
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="5" name="members" value="5">5
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="6" name="members" value="6">6
+            </label>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="7" name="members" value="7">7
+            </label>
+            <button type="submit" class="searchbtn">FILTER</button>
+        </form>
+    </div>
+
+    <script>
+        const select = document.querySelector('#loc');
+        const options = select.querySelectorAll('option');
+        const seen = new Set();
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (seen.has(option.value)) {
+            option.remove();
+            } else {
+            seen.add(option.value);
+            }
+        }
+        let optionsArr = Array.from(select.querySelectorAll('option'));
+        optionsArr.sort((a, b) => a.text.localeCompare(b.text));
+        optionsArr.forEach(option => select.appendChild(option));
+    </script>
+
+    <script>
+        var sliderFrom = document.getElementById("fromYear");
+        var outputFrom = document.getElementById("fromYearDemo");
+        outputFrom.innerHTML = sliderFrom.value;
+        
+        sliderFrom.oninput = function() {
+          outputFrom.innerHTML = this.value;
+        }
+
+        var sliderTo = document.getElementById("toYear");
+        var outputTo = document.getElementById("toYearDemo");
+        outputTo.innerHTML = sliderTo.value;
+        
+        sliderTo.oninput = function() {
+          outputTo.innerHTML = this.value;
+        }
+
+        var sliderAlbumFrom = document.getElementById("fromAlbum");
+        var outputAlbumFrom = document.getElementById("fromAlbumDemo");
+        outputAlbumFrom.innerHTML = sliderAlbumFrom.value;
+        
+        sliderAlbumFrom.oninput = function() {
+          outputAlbumFrom.innerHTML = this.value;
+        }
+
+        var sliderAlbumTo = document.getElementById("toAlbum");
+        var outputAlbumTo = document.getElementById("toAlbumDemo");
+        outputAlbumTo.innerHTML = sliderAlbumTo.value;
+        
+        sliderAlbumTo.oninput = function() {
+          outputAlbumTo.innerHTML = this.value;
+        }
+    </script>
+    
+    <div class="artist_cards">
+        {{range $i, $a := . }}
+        <div class="card" id="{{.Id}}">
+            <form action="/artist_card" method="POST">
+                {{ template "artist" $a}}
+            </form>
+        </div>
+    
+        {{end}}
+    </div>
+
+</body>
+
+</html>
+
+{{define "artist"}}
+<div class="image">
+    <input type="image" src="{{.Image}}">
+</div>
+<div class="artist">
+    <div class="title">
+        <p><b>{{.Name}}</b></p>
+        <input name="name" value="{{.Name}}" type ="hidden">
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/template/style/errorStyle.css" rel="stylesheet">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <title>Groupie-Tracker</title>
+</head>
+<body>
+    <h1><span>Get</span> Lost?</h1>
+    <div class="">
+        ERROR #{{ .Num}}
+        <br>
+        {{ .Text}}
+        <br>
+        <form>
+            <input type="button" value="Back" class="homeButton" onclick="history.back()">
+        </form>
+
+    </div>
+</body>
+</html>

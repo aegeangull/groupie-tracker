@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet'>
+    <link rel="stylesheet" href="/template/style/styles.css">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDinrO3YqS2u1_jivxy4QKUaIQIg6ezlvA"></script>
+    <script src="template/script/script.js"></script>
+    <title>Groupie-Tracker</title>
+</head>
+
+<body>
+    <div class="header">
+        <header>
+          <h1>Groupie-tracker</h1>
+        </header>
+    </div>
+    
+    <form>
+        <input type="button" value="Back" class="homeButton" onclick="history.back()">
+    </form>
+    
+    <div class="artist_cards">
+        {{range $i, $a := . }}
+        <div class="card" id="{{.Id}}">
+            <form action="/artist_card" method="POST">
+                {{ template "artist" $a}}
+            </form>
+        </div>
+    
+        {{end}}
+    </div>
+
+</body>
+
+</html>
+
+{{define "artist"}}
+<div class="image">
+    <input type="image" src="{{.Image}}">
+</div>
+<div class="artist">
+    <div class="title">
+        <p><b>{{.Name}}</b></p>
+        <input name="name" value="{{.Name}}" type ="hidden">
+    </div>
+</div>
+{{end}}
